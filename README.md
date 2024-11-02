@@ -33,7 +33,7 @@ This Mistral AI web application leverages the Web Speech API to provide a seamle
 - **Question Answering**: Users can ask questions related to the transcript.
 - **Summarization**: Provide a concise summary of the transcribed text.
 - **User Authentication**: Basic login and registration system for secure access.
-- **Security**: Django have built-in protections against common attacks, i ensure that all forms have CSRF protection and SQL injection immunity
+- **Security**: Django have built-in protections against common attacks, i ensure that all forms have CSRF protection and SQL injection immunity. The sample is also HTTP secured and Cross Origin Resource sharing only allows the given sub domain
 
 ## Technologies Used
 - **Frontend**: HTML, CSS, JavaScript
