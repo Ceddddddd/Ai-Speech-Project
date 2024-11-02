@@ -9,7 +9,10 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, RegistrationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-api_key = "dJw9FNiIt7tRfiVtWvWEfkqtDoBTgagI"
+from dotenv import load_dotenv
+import os
+
+api_key = os.getenv("API_KEY")
 model = "mistral-large-latest"
 
 client = Mistral(api_key=api_key)
