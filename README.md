@@ -4,10 +4,19 @@
 This Mistral AI web application leverages the Web Speech API to provide a seamless user experience for recording speech, transcribing it into text, and performing various operations such as translation and summarization. Users can interact with the transcribed text by asking questions and receive responses. The application also features a basic login and registration system for user authentication, adding an extra layer of security.
 
 ## Notes
-> **Note 1**: Make sure to set up your environment variables in the `.env` file correctly to ensure the application runs smoothly.
-> **Note 2**: If you're experiencing issues with audio recording, check your browser's microphone permissions.
-> **Note 3**: You should configure your own API key in mistral ai official site.
-> **Note 4**: The Mistral ai being used is run in the cloud and free resulting to slower response if you wanted for much faster response you can apply for the paid ones.
+
+1. **Environment Variables**: 
+   - Ensure that your environment variables are set up correctly in the `.env` file. This is crucial for the application to run smoothly.
+
+2. **Audio Recording Issues**:
+   - If you encounter problems with audio recording, please check your browser's microphone permissions to ensure that they are correctly configured.
+
+3. **API Key Configuration**:
+   - You need to configure your own API key, which can be obtained from the Mistral AI official site. Ensure this is set up before using the application.
+
+4. **Mistral AI Performance**:
+   - The Mistral AI being utilized operates in the cloud and is available for free. Please note that this may result in slower response times. If you require faster responses, consider applying for a paid plan.
+
 
 ## Features
 - **Speech Recording**: Record audio using the Web Speech API.
