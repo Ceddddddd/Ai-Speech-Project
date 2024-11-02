@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text Converter</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .btn-custom {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand text-light">AI Speech</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+<div class="container text-center">
+    <!-- Language Selector -->
+    <div class="mb-3">
+        <label for="language" class="form-label">Choose Language:</label>
+        <select id="language" class="form-select">
+            <option value="en-US">English (United States)</option>
+            <option value="en-GB">English (United Kingdom)</option>
+            <option value="es-ES">Spanish (Spain)</option>
+            <option value="es-MX">Spanish (Mexico)</option>
+            <option value="fr-FR">French (France)</option>
+            <option value="fr-CA">French (Canada)</option>
+            <option value="de-DE">German (Germany)</option>
+            <option value="it-IT">Italian (Italy)</option>
+            <option value="pt-PT">Portuguese (Portugal)</option>
+            <option value="pt-BR">Portuguese (Brazil)</option>
+            <option value="ru-RU">Russian (Russia)</option>
+            <option value="zh-CN">Chinese (Simplified, China)</option>
+            <option value="zh-TW">Chinese (Traditional, Taiwan)</option>
+            <option value="ja-JP">Japanese (Japan)</option>
+            <option value="ko-KR">Korean (South Korea)</option>
+            <option value="ar-SA">Arabic (Saudi Arabia)</option>
+            <option value="fil-PH">Filipino (Philippines)</option>
+            <!-- Add more languages as needed -->
+        </select>
+    </div>
+
+    
+    <!-- Start/Stop Buttons -->
+    <button id="start-btn" class="btn btn-success btn-custom">Start Recording</button>
+    <button id="stop-btn" class="btn btn-outline-success btn-custom">Stop Recording</button>
+
+    <!-- Timer Display -->
+    <div class="mt-3">
+        <span class="timer" id="timer">Recording Time: 0 seconds</span>
+    </div>
+    
+    <!-- Transcription Display -->
+    <div class="mt-4">
+        <h5>Transcription:</h5>
+        <div id="transcript" class="border p-3 rounded" style="height: 150px; overflow-y: auto;"></div>
+    </div>
+
+    <div id="summary" class="mt-4 p-3 border rounded" style="display: none;"></div>
+
+    <!-- Text to Speech and Summarize Text Buttons -->
+    <div class="row mt-3">
+        <div class="mb-3">
+            <label for="output-language" class="form-label">Choose Output Language:</label>
+            <select id="output-language" class="form-select">
+                <option value="en-US">English (United States)</option>
+                <option value="en-GB">English (United Kingdom)</option>
+                <option value="es-ES">Spanish (Spain)</option> <!-- Use "es-ES" for Spanish -->
+                <option value="fr-FR">French (France)</option> <!-- Use "fr-FR" for French -->
+                <option value="de-DE">German (Germany)</option> <!-- Use "de-DE" for German -->
+                <option value="ja-JP">Japanese (Japan)</option> <!-- Use "ja-JP" for Japanese -->
+                <option value="fil-PH">Filipino (Philippines)</option> <!-- Added Filipino -->            
+                <!-- Add more languages as needed -->
+            </select>
+        </div>
+        <!-- Summary Display -->
+        <div class="col">
+            <button id="play-text-btn" class="btn btn-success w-100">Play Text</button>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-success" id="loading-speech" role="status" style="display: none;">
+                    <span class="sr-only"></span>
+                </div>
+            </div>            
+        </div>
+        <div class="col">
+            <button id="summarize-btn" class="btn btn-outline-success w-100">Summarize Text</button>
+            <div class="d-flex justify-content-center" >
+                <div class="spinner-border text-success" id="loading-summary" role="status" style="display: none;">
+                    <span class="sr-only"></span>
+                </div>
+            </div>  
+        </div>
+    </div>
+
+    <!-- Ask Question Section -->
+    <div class="mt-4">
+        <h5>Ask a Question:</h5>
+        <input type="text" id="question-input" class="form-control mb-2" placeholder="Type your question here" />
+        <button id="ask-question-btn" class="btn btn-success btn-custom">Submit</button>
+        <div class="d-flex justify-content-center" >
+            <div class="spinner-border text-success" id="loading-question" role="status" style="display:none;">
+                <span class="sr-only"></span>
+            </div>
+        </div>  
+        <!-- Clear Button as Outlined -->
+        <button id="clear-btn" class="btn btn-outline-success btn-custom">Clear</button>
+    </div>
+
+
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+<script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const synth = window.speechSynthesis;
+
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        let isRecording = false;
+        let timerInterval;
+        let seconds = 0;
+
+        // Function to update the timer
+        function startTimer() {
+            seconds = 0;
+            document.getElementById('timer').innerText = `Recording Time: ${seconds} seconds`;
+            timerInterval = setInterval(() => {
+                seconds += 1;
+                document.getElementById('timer').innerText = `Recording Time: ${seconds} seconds`;
+            }, 1000);
+        }
+
+        // Function to stop the timer
+        function stopTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer').innerText = `Recording Time: ${seconds} seconds`;
+        }
+
+        // Start recording
+        document.getElementById('start-btn').onclick = () => {
+            if (!isRecording) {
+                const language = document.getElementById('language').value;
+                recognition.lang = language;
+                recognition.start();
+                isRecording = true;
+                startTimer();
+            }
+        };
+
+        // Stop recording
+        document.getElementById('stop-btn').onclick = () => {
+            if (isRecording) {
+                recognition.stop();
+                isRecording = false;
+                stopTimer();
+            }
+        };
+
+        // Display transcription result and continue recording
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('transcript').innerText += transcript + " ";
+        };
+
+        // Automatically restart recognition if still recording
+        recognition.onend = () => {
+            if (isRecording) {
+                recognition.start();
+            }
+        };
+
+        // Handle recognition errors
+        recognition.onerror = (event) => {
+            console.error(`Error occurred: ${event.error}`);
+            stopTimer();
+        };
+    } else {
+        alert('Sorry, your browser does not support speech recognition.');
+    }
+
+  // Text to Speech functionality with translation
+  document.getElementById('play-text-btn').onclick = async () => {
+        const transcript = document.getElementById('transcript').innerText;
+        const outputLanguage = document.getElementById('output-language').value; // Get selected output language
+        const btn = document.getElementById('play-text-btn');
+        const load = document.getElementById('loading-speech');
+
+        if (transcript && synth) {
+            try {
+                // Fetch translation
+                btn.style.display = 'none'
+                load.style.display = "block"; 
+                const response = await fetch(`http://127.0.0.1:8000/translate/`, { // Update this URL to your translation API
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text: transcript, targetLanguage: outputLanguage }) // Send the transcript and target language
+                });
+
+                const result = await response.json();
+
+                if (result.translatedText) {
+                    const utterance = new SpeechSynthesisUtterance(result.translatedText); // Use translated text
+                    utterance.lang = outputLanguage; 
+                    document.getElementById('summary').style.display = 'block';
+                    document.getElementById('summary').innerText = result.translatedText; 
+                    synth.speak(utterance);
+
+                } else {
+                    alert('Translation failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error fetching translation:', error);
+                alert('Error fetching translation. Please check the console for details.');
+            }
+            finally{
+                    load.style.display = 'none'
+                    btn.style.display = ''
+            }
+        } else {
+            alert('No text to read.');
+        }
+    };
+
+    document.getElementById('summarize-btn').onclick = async () => {
+    const transcript = document.getElementById('transcript').innerText;
+    const loadingIndicator = document.getElementById('loading-summary');
+    const btn = document.getElementById('summarize-btn')
+    const outputLanguage = document.getElementById('output-language').value;
+    if (transcript) {
+        try {
+            loadingIndicator.style.display = 'block';
+            btn.style.display = 'none'; // Show loading indicator
+            const response = await fetch(`http://127.0.0.1:8000/transcript/summarize/`, { 
+                method: 'POST', // Use POST for sending the transcript
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ transcript,outputLanguage }) // Send the transcript as JSON
+            });
+            const result = await response.json();
+            document.getElementById('summary').style.display = 'block';
+            document.getElementById('summary').innerText = result.summary; // Assuming the API returns a summary property
+        } catch (error) {
+            console.error('Error fetching summary:', error);
+            alert('Error summarizing text. Please try again later.');
+        } finally {
+            loadingIndicator.style.display = 'none';
+            btn.style.display = '';
+        }
+    } else {
+        alert('No text available to summarize.');
+    }
+};
+
+
+// Ask Question functionality
+document.getElementById('ask-question-btn').onclick = async () => {
+    const question = document.getElementById('question-input').value; 
+    const transcript = document.getElementById('transcript').innerText;
+    const question_loading = document.getElementById('loading-question');
+    const btn_question = document.getElementById('ask-question-btn')
+    if (transcript) {
+        question_loading.style.display = 'block';
+        btn_question.style.display = 'none';
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/question/`, {
+                method: 'POST', // Use POST for asking a question
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ transcript,question }) // Send the transcript as JSON
+            });
+            const result = await response.json();
+            document.getElementById('summary').style.display = 'block';
+            document.getElementById('summary').innerText = result.answer; // Assuming the API returns an answer property
+        } catch (error) {
+            console.error('Error asking question:', error);
+            alert('Error asking question. Please try again later.');
+        }
+        finally{
+            question_loading.style.display = 'none';
+            btn_question.style.display = 'block';
+        }
+    } else {
+        alert('Please type a question.');
+    }
+};
+
+
+document.getElementById('clear-btn').onclick = () => {
+    document.getElementById('transcript').innerText = ''; // Clear transcript
+    document.getElementById('question-input').value = ''; // Clear question input
+    document.getElementById('summary').style.display = 'none'; // Hide the summary
+    document.getElementById('summary').innerText = ''; // Clear summary text
+};
+
+
+</script>
+
+</body>
+</html>
