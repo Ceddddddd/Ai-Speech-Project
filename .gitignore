@@ -13,3 +13,5 @@ env/
 # Ignore database and media files
 db.sqlite3
 /media/
+
+.env
