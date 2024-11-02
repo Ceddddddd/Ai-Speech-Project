@@ -3,6 +3,8 @@
 ## Overview
 This Mistral AI web application leverages the Web Speech API to provide a seamless user experience for recording speech, transcribing it into text, and performing various operations such as translation and summarization. Users can interact with the transcribed text by asking questions and receive responses. The application also features a basic login and registration system for user authentication, adding an extra layer of security.
 
+You can run demo the website here: https://transcribetitan.pythonanywhere.com/
+
 ## Prerequisites
 
 - Basic knowledge of Django and JavaScript.
