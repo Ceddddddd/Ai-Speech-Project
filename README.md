@@ -3,6 +3,12 @@
 ## Overview
 This Mistral AI web application leverages the Web Speech API to provide a seamless user experience for recording speech, transcribing it into text, and performing various operations such as translation and summarization. Users can interact with the transcribed text by asking questions and receive responses. The application also features a basic login and registration system for user authentication, adding an extra layer of security.
 
+## Prerequisites
+
+- Basic knowledge of Django and JavaScript.
+- A Django project set up with views to handle AJAX requests.
+- Django version 2.x or higher.
+
 ## Notes
 
 1. **Environment Variables**: 
@@ -33,7 +39,7 @@ This Mistral AI web application leverages the Web Speech API to provide a seamle
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Python and Django (https://docs.djangoproject.com/en/5.1/intro/install/)
 - **APIs**: Web Speech API and Mistral AI (https://docs.mistral.ai/getting-started/quickstart/) 
-- **Database**: PostgreSQL
+- **Database**: SQLite
 
 ## Installation
 To set up the project locally, follow these steps:
@@ -61,8 +67,8 @@ To run the project locally, follow these steps:
    python manage.py runserver
 
 2. **Open the Application**:
-   -Navigate to http://localhost:8000 (or the port specified) in your web browser
+   Navigate to http://localhost:8000 (or the port specified) in your web browser
 
 3. **Authentication**:
-   -You should go to registration first before you can enter the main page as it is a protected url and requires login
+   You should go to registration first before you can enter the main page as it is a protected url and requires login
 
